@@ -1,0 +1,5 @@
+node_modules/
+.env
+.replay/
+move/*/build/
+move/*/traces/

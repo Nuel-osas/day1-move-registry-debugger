@@ -1,0 +1,14 @@
+{
+  "name": "day1-move-registry-debugger",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "resolve": "node scripts/01-resolve-by-name.mjs",
+    "call-by-name": "node scripts/02-call-by-name.mjs",
+    "break-it": "node scripts/03-break-it.mjs",
+    "register": "node scripts/04-register-package-info.mjs"
+  },
+  "dependencies": {
+    "@mysten/sui": "^1.40.0"
+  }
+}

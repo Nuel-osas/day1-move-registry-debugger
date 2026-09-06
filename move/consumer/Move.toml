@@ -1,0 +1,11 @@
+[package]
+name = "consumer"
+edition = "2024.beta"
+license = "MIT"
+
+[addresses]
+consumer = "0x0"
+
+[dependencies]
+deepbook = { r.mvr = "@deepbook/core" }
+vault = { r.mvr = "@weed420/vault" }
