@@ -68,6 +68,11 @@ mvr resolve @weed420/vault --network testnet
 
 Then in `move/consumer/Move.toml` add `vault = { r.mvr = "@weed420/vault" }` and build.
 
+Gotcha worth saying out loud: for a Move dependency, the `mvr` binary fetches the package
+source from the git info on the PackageInfo (repository, path, tag). If that repo is private or
+the path is wrong, `sui move build` fails with an unhelpful "Unexpected parsing error". Calling
+by name from TypeScript or the CLI does not need the source; only Move dependencies do.
+
 ## Part 4: the trace debugger (60 min)
 
 ### 4a. Unit test trace

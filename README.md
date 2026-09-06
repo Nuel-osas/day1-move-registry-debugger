@@ -64,5 +64,7 @@ Sui CLI 1.79+ from Homebrew (tracing enabled), Node 20+, pnpm, the `mvr` CLI, an
 - Mysten's public fullnodes no longer serve JSON-RPC. The scripts use a provider that still
   does on testnet (`SUI_RPC_URL` to override). JSON-RPC is removed entirely in mid-October 2026.
 - Registering your own name needs a SuiNS name you own on mainnet. Consuming names does not.
+- Depending on a name from `Move.toml` needs the package's source to be reachable at the git
+  info recorded on its PackageInfo. Calling by name from TypeScript or the CLI does not.
 
 MIT.
