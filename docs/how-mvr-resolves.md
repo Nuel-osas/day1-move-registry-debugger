@@ -16,3 +16,27 @@
    - Move.toml: `dep = { r.mvr = "@name/app" }`; `sui move build` shells out to the `mvr` binary.
    - TypeScript: `namedPackagesPlugin({ url })` registered on `Transaction`.
    - CLI: `sui client ptb --move-call @name/app::module::fn ...`.
+
+## Versions and upgrades
+
+- The number in `@name/app/3` is the package's on-chain upgrade count. First publish is 1.
+- A bare name resolves to the newest version automatically. `@deepbook/core` is on 20; the
+  name followed every upgrade with no action from the owner.
+- `@name/app/N` pins version N permanently.
+- After each upgrade, call `set_git_versioning(info, N, git)` so Move dependencies on version N
+  can fetch matching source. TypeScript and CLI calls by name do not need this.
+- Re-point with `unset_network` / `set_network` only if the package itself moved (a fresh
+  publish with a new UpgradeCap), not for upgrades.
+
+## Order of operations
+
+PackageInfo is created from the UpgradeCap. Publish, create the PackageInfo, register the name,
+and only then `make_immutable`. A package whose cap is already burned cannot be given a name.
+
+## Gotchas seen in practice
+
+- A Move dependency on a name fetches source from the git info on the PackageInfo. A private
+  repo or wrong path fails `sui move build` with "Unexpected parsing error".
+- The HTTP resolver lagged a few minutes behind a fresh registration; `mvr resolve` reads the
+  chain and was current immediately.
+- moveregistry.com/apps offers the same steps behind a wallet connect (SuiNS owner, mainnet).
