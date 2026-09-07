@@ -16,4 +16,5 @@ console.log(`status: ${res.effects.status.status}`);
 console.log(`digest: ${res.digest}\n${explorer(res.digest)}`);
 for (const e of res.events ?? []) console.log("event:", e.type.split("::").slice(1).join("::"), e.parsedJson);
 const v = await client.getObject({ id: vaultId, options: { showContent: true } });
-console.log("vault fields:", v.data.content.fields);
+const f = v.data.content.fields;
+console.log(`vault v${f.version}  treasury=${f.treasury}  fee_bps=${f.fee_bps}  state=${f.state?.variant ?? f.state}`);

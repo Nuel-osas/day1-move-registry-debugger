@@ -10,6 +10,7 @@ use vault::vault::{Self, Vault, VaultAdminCap};
 
 const ADMIN: address = @0xA;
 const USER: address = @0xB;
+const OTHER: address = @0xC;
 
 fun setup(): ts::Scenario {
     let mut s = ts::begin(ADMIN);
@@ -24,12 +25,12 @@ fun test_deposit_then_partial_withdraw() {
     s.next_tx(USER);
     let mut v = s.take_shared<Vault>();
     v.deposit(coin::mint_for_testing<SUI>(10_000, s.ctx()), s.ctx());
-    assert_eq!(v.funds(), 10_000);
+    assert_eq!(v.balance_of(USER), 10_000);
     let out = v.withdraw(1_000, s.ctx());
     // 50 bps of 1_000 = 5
     assert_eq!(out.value(), 995);
     assert_eq!(v.treasury(), 5);
-    assert_eq!(v.funds(), 9_000);
+    assert_eq!(v.balance_of(USER), 9_000);
     coin::burn_for_testing(out);
     ts::return_shared(v);
     s.end();
@@ -68,6 +69,18 @@ fun test_deposit_when_frozen_aborts() {
     abort 0
 }
 
+#[test, expected_failure(abort_code = vault::ENoDeposit)]
+fun test_other_user_cannot_withdraw_my_deposit() {
+    let mut s = setup();
+    s.next_tx(USER);
+    let mut v = s.take_shared<Vault>();
+    v.deposit(coin::mint_for_testing<SUI>(10_000, s.ctx()), s.ctx());
+    s.next_tx(OTHER);
+    let out = v.withdraw(1, s.ctx());
+    coin::burn_for_testing(out);
+    abort 0
+}
+
 #[test, expected_failure(abort_code = vault::EInsufficientBalance)]
 fun test_withdraw_far_above_balance_aborts_cleanly() {
     let mut s = setup();
@@ -79,7 +92,7 @@ fun test_withdraw_far_above_balance_aborts_cleanly() {
     abort 0
 }
 
-// The bug. After one withdrawal the treasury holds 5 and funds hold 9_000.
+// The bug. After one withdrawal the treasury holds 5 and the user holds 9_000.
 // Withdrawing 9_003 should abort with EInsufficientBalance (30). It aborts
 // with sui::balance::ENotEnough (2) instead, from inside the framework.
 // Run `sui move test --trace`, open traces/ in VS Code, and step to the line
@@ -92,7 +105,7 @@ fun test_withdraw_just_above_balance_aborts_in_framework() {
     v.deposit(coin::mint_for_testing<SUI>(10_000, s.ctx()), s.ctx());
     let first = v.withdraw(1_000, s.ctx());
     coin::burn_for_testing(first);
-    assert_eq!(v.funds(), 9_000);
+    assert_eq!(v.balance_of(USER), 9_000);
     assert_eq!(v.treasury(), 5);
     let second = v.withdraw(9_003, s.ctx());
     coin::burn_for_testing(second);

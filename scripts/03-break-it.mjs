@@ -1,8 +1,8 @@
 // Reproduce the bug on-chain, then hand the digest to `sui replay --trace`.
 //
 // The guard in `withdraw` counts the treasury as withdrawable:
-//   available = funds + treasury;  assert!(available >= amount)
-// So withdrawing (funds + 1) passes the guard whenever treasury >= 1, and then
+//   available = my_balance + treasury;  assert!(available >= amount)
+// So withdrawing (my_balance + 1) passes the guard whenever treasury >= 1, and then
 // `sui::balance::split` aborts with ENotEnough (2) instead of the vault's own
 // EInsufficientBalance (30). This script reads the live vault, makes sure the
 // treasury is non-zero, and sends exactly that withdrawal.
@@ -16,7 +16,13 @@ const me = kp.toSuiAddress();
 async function vault() {
   const o = await client.getObject({ id: vaultId, options: { showContent: true } });
   const f = o.data.content.fields;
-  return { funds: BigInt(f.funds), treasury: BigInt(f.treasury), feeBps: BigInt(f.fee_bps) };
+  // v2: each depositor's SUI is a Balance<SUI> dynamic field keyed by address.
+  let mine = 0n;
+  try {
+    const dfo = await client.getDynamicFieldObject({ parentId: vaultId, name: { type: "address", value: me } });
+    mine = BigInt(dfo.data?.content?.fields?.value ?? 0);
+  } catch { mine = 0n; }
+  return { mine, treasury: BigInt(f.treasury), feeBps: BigInt(f.fee_bps), version: f.version };
 }
 
 async function deposit(amount) {
@@ -38,9 +44,9 @@ async function withdraw(amount) {
 }
 
 let v = await vault();
-console.log(`vault before   funds=${v.funds} treasury=${v.treasury} fee_bps=${v.feeBps}`);
+console.log(`vault v${v.version}   my balance=${v.mine} treasury=${v.treasury} fee_bps=${v.feeBps}`);
 
-if (v.funds < 10_000n) {
+if (v.mine < 10_000n) {
   const r = await deposit(10_000n);
   console.log(`deposit 10_000   ${r.effects.status.status}  ${r.digest}`);
 }
@@ -49,9 +55,9 @@ if (v.treasury === 0n) {
   console.log(`withdraw 1_000   ${r.effects.status.status}  ${r.digest}`);
 }
 v = await vault();
-const amount = v.funds + 1n;
-console.log(`vault now      funds=${v.funds} treasury=${v.treasury}`);
-console.log(`withdraw ${amount}: guard sees ${v.funds + v.treasury} >= ${amount}, passes; split will fail`);
+const amount = v.mine + 1n;
+console.log(`now            my balance=${v.mine} treasury=${v.treasury}`);
+console.log(`withdraw ${amount}: guard sees ${v.mine + v.treasury} >= ${amount}, passes; split will fail`);
 
 const r = await withdraw(amount);
 console.log(`withdraw ${amount}   ${r.effects.status.status}  ${r.digest}`);

@@ -60,11 +60,17 @@ Then open `.replay/<DIGEST>` in VS Code and start debugging. Full steps in `WALK
 ## The bug
 
 ```move
-let available = self.funds.value() + self.treasury.value();   // should be funds only
-assert!(available >= amount, EInsufficientBalance);           // passes when it should not
-self.treasury.join(self.funds.split(fee));
-let out = coin::from_balance(self.funds.split(payout), ctx);  // aborts in sui::balance, code 2
+let ledger = df::borrow_mut<address, Balance<SUI>>(&mut self.id, recipient);
+let available = ledger.value() + treasury_value;          // should be ledger.value() alone
+assert!(available >= amount, EInsufficientBalance);       // passes when it should not
+let fee_balance = ledger.split(fee);
+let out = coin::from_balance(ledger.split(payout), ctx);  // aborts in sui::balance, code 2
 ```
+
+Each depositor's SUI is its own `Balance<SUI>` dynamic field on the vault, keyed by address, so
+you can only withdraw what you deposited. The vault is at version 2 on both networks; v1 code
+is inert after `migrate`. The names `@weed420/vault` and `@weed420/vault2` followed the upgrade
+with no registry change.
 
 You asked for error 30 from your module. You got error 2 from a module you did not write.
 That is the kind of failure the debugger is for.
