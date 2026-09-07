@@ -17,6 +17,7 @@ bug should be found by stepping through the execution, not by printing.
 | `scripts/05-register-name.mjs` | Register `@weed420/vault` in the registry on mainnet and point its testnet entry at the PackageInfo. |
 | `SETUP.md` | Install everything before class. |
 | `WALKTHROUGH.md` | The class, step by step, in the order it runs. |
+| `docs/naming-step-by-step.md` | Naming a package from zero, one command per step, with the real IDs from this repo as the worked example. Start here if registration is confusing. |
 | `docs/` | Reference notes: how MVR resolves, how traces work, what to look for. |
 
 ## Live IDs (testnet)
