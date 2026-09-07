@@ -217,7 +217,7 @@ sui client ptb \
       "some(@$TESTNET_PACKAGE_INFO_ID)" "some(@$VAULT_PACKAGE_ID)" "some(@$UPGRADE_CAP_ID)" --assign info \
   --move-call @mvr/core::move_registry::set_network \
       @0x0e5d473a055b6b7d014af557a13ad9075157fdc19b6d51562a18511afd397727 cap '"4c78adac"' info \
-  --transfer-objects [cap] @$SUINS_OWNER_ADDRESS \
+  --transfer-objects '[cap]' @$SUINS_OWNER_ADDRESS \
   --gas-budget 50000000
 ```
 

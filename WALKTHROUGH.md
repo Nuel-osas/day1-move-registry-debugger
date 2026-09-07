@@ -8,6 +8,9 @@ Networks: publishing and naming happen on **mainnet** today. Testnet is used onl
 debugger's throwaway failing transaction. Set `SUI_NETWORK=mainnet` in front of a script to
 pick up `.env.mainnet`; leave it off to use `.env` (testnet).
 
+Shell note: zsh expands `[...]` as a glob. Every PTB list argument is quoted below, `'[10000000]'`,
+`'[out]'`. Without the quotes you get `zsh: no matches found`.
+
 ## Part 0: the story (talk, 25 min)
 
 Slides. No terminal. The one live moment: resolve three versions of DeepBook so the room sees
@@ -122,7 +125,7 @@ or use the CLI below.
 ```bash
 sui client ptb \
   --move-call @weed420/<name>::greeter::greet '"hello from SuiHub"' --assign g \
-  --transfer-objects [g] @$(sui client active-address) \
+  --transfer-objects '[g]' @$(sui client active-address) \
   --gas-budget 10000000
 ```
 
