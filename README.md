@@ -30,6 +30,18 @@ bug should be found by stepping through the execution, not by printing.
 | MVR name | `@weed420/vault` |
 | Failing digest | `8NCYCzV67YQr73jVXnAsw3tTgDAiVCDZku7EPH4zc2M9` |
 
+## Live IDs (mainnet)
+
+| | |
+|---|---|
+| Vault package | `0xa43af7414ff07c16d642656dd5db14b9b998bca11bb35a4473dd00adb0abd7eb` |
+| Vault (shared) | `0x34b732f113bb675214d0879128aebde753746269ea3a53205aaa68468b6d0497` |
+| PackageInfo | `0x5191e4e8ec777ad7f897a4c91f18a8fb1d243b4e8722de00fde98109da92768a` |
+
+Both PackageInfo objects are held by the wallet that owns weed420.sui, so the mainnet binding
+can be made from moveregistry.com with that wallet. PackageInfo has no `store` ability: move it
+with `@mvr/metadata::package_info::transfer`, not `sui client transfer`.
+
 ## Quick start
 
 ```bash
