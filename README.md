@@ -40,6 +40,11 @@ call it by name. Then debug it with traces instead of prints.
 | Vault (shared) | `0x34b732f113bb675214d0879128aebde753746269ea3a53205aaa68468b6d0497` |
 | PackageInfo | `0x5191e4e8ec777ad7f897a4c91f18a8fb1d243b4e8722de00fde98109da92768a` |
 
+A second mainnet vault with the v2 code was published on 2026-09-07 from the SuiNS owner wallet:
+package `0xeb11854fd72d724fdd5e2d3e16a245192b22a6b9218fba053df304a4bb3a87c0`, shared vault
+`0x4f019b48e8e60b4ab5f5062b8fe10e44d67c3109971684ff4202c0a368b8c1cc`. `move/vault/Published.toml`
+now records that one under mainnet; the original's IDs are kept in `scripts/deployed.mainnet.env`.
+
 Both PackageInfo objects are held by the wallet that owns weed420.sui, so the mainnet binding
 can be made from moveregistry.com with that wallet. PackageInfo has no `store` ability: move it
 with `@mvr/metadata::package_info::transfer`, not `sui client transfer`.
