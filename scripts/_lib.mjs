@@ -70,11 +70,26 @@ export function explorer(digest) {
   return `https://suiscan.xyz/${NETWORK}/tx/${digest}`;
 }
 
+// Loads .env, then .env.<SUI_NETWORK> on top of it (so `SUI_NETWORK=mainnet`
+// picks up .env.mainnet). Variables already set in the shell win.
 function loadDotEnv() {
-  const p = join(process.cwd(), ".env");
-  if (!existsSync(p)) return;
-  for (const line of readFileSync(p, "utf8").split("\n")) {
-    const m = line.match(/^\s*([A-Z_]+)\s*=\s*(.*)\s*$/);
-    if (m && process.env[m[1]] === undefined) process.env[m[1]] = m[2].replace(/^"|"$/g, "");
+  const base = join(process.cwd(), ".env");
+  const shellNet = process.env.SUI_NETWORK;
+  const files = [];
+  if (existsSync(base)) files.push(base);
+  const net = shellNet ?? readVar(base, "SUI_NETWORK") ?? "testnet";
+  const perNet = join(process.cwd(), `.env.${net}`);
+  if (existsSync(perNet)) files.push(perNet);
+  const seen = new Set(Object.keys(process.env));
+  for (const f of files.reverse()) {              // per-network first so it overrides base
+    for (const line of readFileSync(f, "utf8").split("\n")) {
+      const m = line.match(/^\s*([A-Z_]+)\s*=\s*(.*?)\s*$/);
+      if (m && !seen.has(m[1])) { process.env[m[1]] = m[2].replace(/^"|"$/g, ""); seen.add(m[1]); }
+    }
   }
+}
+function readVar(file, key) {
+  if (!existsSync(file)) return undefined;
+  const m = readFileSync(file, "utf8").match(new RegExp(`^\\s*${key}\\s*=\\s*(.*?)\\s*$`, "m"));
+  return m?.[1];
 }
