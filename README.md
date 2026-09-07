@@ -9,11 +9,13 @@ bug should be found by stepping through the execution, not by printing.
 | Path | What it is |
 |---|---|
 | `move/vault/` | The demo package. A shared SUI vault with a planted bug in `withdraw`. Six unit tests, one of which exercises the bug. |
+| `move/counter/`, `move/greeter/` | Two tiny extra packages, published on mainnet, so the registry demo has several PackageInfos to choose from. |
 | `move/consumer/` | A package that depends on DeepBook by MVR name (`@deepbook/core`) and, after registration, on `@weed420/vault`. |
 | `scripts/01-resolve-by-name.mjs` | Resolve names over plain HTTP. Shows what the SDK plugin calls under the hood. |
 | `scripts/02-call-by-name.mjs` | Deposit into the vault with a name as the call target. No address in the file. |
 | `scripts/03-break-it.mjs` | Trip the bug on testnet so the failure has a digest you can replay. |
 | `scripts/04-register-package-info.mjs` | Create the vault's `PackageInfo` on testnet from the UpgradeCap, with metadata and git info. |
+| `scripts/06-package-info-for.mjs` | Create a PackageInfo for any package you hold the cap of, with a display name (what moveregistry.com shows), metadata, git info, and send it to a wallet. |
 | `scripts/05-register-name.mjs` | Register `@weed420/vault` in the registry on mainnet and point its testnet entry at the PackageInfo. |
 | `SETUP.md` | Install everything before class. |
 | `WALKTHROUGH.md` | The class, step by step, in the order it runs. |

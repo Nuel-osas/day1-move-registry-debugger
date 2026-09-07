@@ -1,0 +1,7 @@
+[package]
+name = "counter"
+edition = "2024.beta"
+license = "MIT"
+
+[addresses]
+counter = "0x0"

@@ -1,0 +1,7 @@
+[package]
+name = "greeter"
+edition = "2024.beta"
+license = "MIT"
+
+[addresses]
+greeter = "0x0"
