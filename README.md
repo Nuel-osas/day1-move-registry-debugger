@@ -3,8 +3,8 @@
 Companion repo for Day 1 of the SuiHub Lagos Production Week. Two tools, one package,
 one real failed transaction.
 
-The one idea of the day: a package should be known by a name, not an address, and a
-bug should be found by stepping through the execution, not by printing.
+The spine of the day: write a contract, publish it on mainnet, name it on the Move Registry,
+call it by name. Then debug it with traces instead of prints.
 
 | Path | What it is |
 |---|---|

@@ -254,6 +254,21 @@ right, because the mvr binary fetches the source from there.
 
 ---
 
+## The website path (what we did for @weed420/vault2)
+
+1. Publish on mainnet and create a PackageInfo with a display name:
+   `SUI_NETWORK=mainnet node scripts/06-package-info-for.mjs <UPGRADE_CAP_ID> @weed420/<app> "<card name>" <git subdir> <SUINS_OWNER_ADDRESS>`
+   The last argument sends the PackageInfo to the wallet you will connect to the site.
+2. Open moveregistry.com/apps, connect the SuiNS owner wallet on mainnet.
+3. Create Package: organisation `@weed420`, name `<app>`, description, docs URL.
+4. Mainnet metadata: pick your card. This binding is permanent. Testnet metadata: optional, changeable.
+5. Tick the irreversible box, create, sign once.
+6. `mvr resolve @weed420/<app> --network mainnet`.
+
+The site never asks for a package ID or UpgradeCap because the PackageInfo you pick already
+contains both. PackageInfo has no `store` ability, so it moves only via
+`@mvr/metadata::package_info::transfer`, not `sui client transfer`.
+
 ## Later: things you will do again
 
 **After you upgrade the package.** Nothing on the registry. Add git info for the new version so
